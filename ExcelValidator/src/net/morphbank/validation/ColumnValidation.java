@@ -1,12 +1,10 @@
 package net.morphbank.validation;
 
-import java.io.BufferedWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
+import net.morphbank.excel.tools.CellTools;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
-import com.google.common.net.MediaType;
 
 /**
  * All tests on an entire column or comparaison of two columns
@@ -22,6 +20,7 @@ public class ColumnValidation extends Validation{ //TODO rewrite method descript
 	public static final int UNIQUE_STRING_TEST = 4;
 	public static final int UNIQUE_NUMERIC_TEST = 5;
 	public static final int UNIQUE_TEST = 6;
+	public static final int DROP_DOWN_TEST = 7;
 	
 	ArrayList<Cell> col1, col2;
 	LinkedHashMap<String, String> errorFound = new LinkedHashMap<String, String>();
@@ -177,7 +176,7 @@ public class ColumnValidation extends Validation{ //TODO rewrite method descript
 		multipleErrorsFound.clear();
 		ArrayList<String> duplicates = new ArrayList<String>();
 		ArrayList<String> listProgress = new ArrayList<String>();
-		for (int i = 1; i < col1.size(); i++) {
+		for (int i = 0; i < col1.size(); i++) {
 			duplicates.clear();
 			Cell currentCell = col1.get(i);
 			String currentCellValue = "";
@@ -214,7 +213,7 @@ public class ColumnValidation extends Validation{ //TODO rewrite method descript
 		multipleErrorsFound.clear();
 		ArrayList<String> duplicates = new ArrayList<String>();
 		ArrayList<Double> listProgress = new ArrayList<Double>();
-		for (int i = 1; i < col1.size(); i++) {
+		for (int i = 0; i < col1.size(); i++) {
 			duplicates.clear();
 			Cell currentCell = col1.get(i);
 			Double currentCellValue = 0.0;
@@ -291,8 +290,42 @@ public class ColumnValidation extends Validation{ //TODO rewrite method descript
 			return uniqueNumericValue();
 		case UNIQUE_TEST:
 			return uniqueValue();
+		case DROP_DOWN_TEST:
+			return dropDown();
 		}
 		return false;
+	}
+	
+	/**
+	 * Test if cell values match values in a drop down list
+	 * @return true if all values are in the drop down list
+	 */
+	public boolean dropDown() {
+		boolean allValuesInDropDown = true;
+		if (col2 == null) {
+			return false;
+		}
+		String dropDownSheetName = col2.get(0).getSheet().getSheetName();
+		String dropDownColumn = CellReference.convertNumToColString(col2.get(0).getColumnIndex());
+		for (int i = 0; i < col1.size(); i++) {
+			boolean valueInDropDown = false;
+			Cell cellWithValue = col1.get(i);
+			String cellWithValueContent = CellTools.getCellValue(cellWithValue);
+			for (int j = 0; j < col2.size(); j++) {
+				Cell cellFromDropDown = col2.get(j);
+				String cellFromDropDownContent = CellTools.getCellValue(cellFromDropDown);
+				if (cellWithValueContent.equals(cellFromDropDownContent)) {
+					valueInDropDown = true;
+					break;
+				}
+			}
+			if (!valueInDropDown) {
+				String cellCoordinates = new CellReference(cellWithValue).formatAsString();
+				multipleErrorsFound.put(cellCoordinates, new String[]{dropDownSheetName, dropDownColumn});
+				allValuesInDropDown = false;
+			}
+		}
+		return allValuesInDropDown;
 	}
 
 }

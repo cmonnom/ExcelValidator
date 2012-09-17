@@ -40,6 +40,22 @@ public class CellTools {
 		this.cell = cell;
 	}
 	
-	
+	/**
+	 * Get a String value of a cell regardless of CellType
+	 * @param cell
+	 * @return
+	 */
+	public static String getCellValue(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
+		if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+			return String.valueOf(cell.getNumericCellValue());
+		}
+		if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+			return cell.getStringCellValue();
+		}
+		return "";
+	}
 	
 }

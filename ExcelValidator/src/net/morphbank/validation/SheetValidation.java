@@ -35,9 +35,19 @@ public class SheetValidation extends SheetTools {
 		return new ColumnValidation(this.getColumn(columnNumber));
 	}
 	
+	public ColumnValidation createColumnValidation(String header1, String header2) {
+		return new ColumnValidation(this.getColumn(header1), this.getColumn(header2));
+	}
+	
+	public ColumnValidation createColumnValidation(int columnNumber1, int columnNumber2) {
+		return new ColumnValidation(this.getColumn(columnNumber1), this.getColumn(columnNumber2));
+	}
+	
 	public RowValidation createRowValidation(int rowNumber) {
 		return new RowValidation(this.getSheet().getRow(rowNumber), this.getHeaderTools());
 	}
+	
+	
 	
 	/**
 	 * Group multiple requests for row validations

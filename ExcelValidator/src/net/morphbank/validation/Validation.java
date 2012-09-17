@@ -11,6 +11,14 @@ import java.util.Map;
  */
 public abstract class Validation {
 
+	/**
+	 * Execute a method by its method id
+	 * Each method id must be declared in children of Validation
+	 * @param choice method id
+	 * @param args arguments needed for the method called
+	 * @return true if the test is successful
+	 * @throws Exception
+	 */
 	public abstract boolean chooseMethod(int choice, Object... args) throws Exception;
 	
 	public abstract Map<String, String> getErrorsFound();

@@ -43,16 +43,17 @@ public class ValidateTest {
 		Validate validate = new Validate(excelFile, out);
 		//Sheet Test1
 		SheetValidation validateSheet1 = new SheetValidation(validate.getOutput(), validate.getWorkbook(), "MySheet", MediaType.PLAIN_TEXT_UTF_8);
-		test.testPatternAbsent(validateSheet1);
-		test.testExtraSpaces(validateSheet1);
+//		test.testPatternAbsent(validateSheet1);
+//		test.testExtraSpaces(validateSheet1);
 		test.testUniqueStringValue(validateSheet1);
-		test.testMandatoryCells(validateSheet1);
-		test.testCreateMultipleRowValidation(validateSheet1);
-		test.testRowRange();
-		test.binarySearch();
-		test.testUniqueNumericValue(validateSheet1);
-		test.testUniqueHeader(validateSheet1);
-		test.testUniqueValue(validateSheet1);
+//		test.testMandatoryCells(validateSheet1);
+//		test.testCreateMultipleRowValidation(validateSheet1);
+//		test.testRowRange();
+//		test.binarySearch();
+//		test.testUniqueNumericValue(validateSheet1);
+//		test.testUniqueHeader(validateSheet1);
+//		test.testUniqueValue(validateSheet1);
+//		test.testDropDown(validateSheet1);
 		
 //		
 //		check2 = validateSheet1.createMultipleRowValidation(new int[]{1,2,4,7,8,9,10}, RowValidation.MANDATORY_CELL_TEST, "Column B");
@@ -219,6 +220,21 @@ public class ValidateTest {
 					.createDupFoundMessage(ErrorManager.UNIQUENESS_ERROR, validateColC.getMultipleErrorsFound(), ",");
 			System.out.println(errorToPrint);
 			sheetValidation.getErrorManager().printMessage(errorToPrint.toString());
+		}
+	}
+	
+	public void testDropDown(SheetValidation sheetValidation) {
+		String colB = "Column B";
+		String colDD = "Drop Down";
+		ColumnValidation validation = sheetValidation.createColumnValidation(colB, colDD);
+		boolean check = validation.dropDown();
+		if (!check) {
+//			StringBuffer errorToPrint = sheetValidation.getErrorManager()
+//					.createDropDownMessage(ErrorManager.DROP_DOWN_ERROR, validation.getMultipleErrorsFound());
+			StringBuffer errorToPrint2 = sheetValidation.getErrorManager()
+					.createMessageFromErrorMessage(ErrorManager.DROP_DOWN_ERROR, new Object[]{validation.getMultipleErrorsFound()});
+			System.out.println(errorToPrint2);
+//			sheetValidation.getErrorManager().printMessage(errorToPrint.toString());
 		}
 	}
 	

@@ -25,6 +25,7 @@ public class ErrorManager {
 	public static final String EXTRA_SPACES_ERROR = "This cell's value has extra spaces leading or trailing";
 	public static final String UNIQUENESS_ERROR = "Duplicate values found:";
 	public static final String MULTIPLE_HEADER_VALUES_ERROR = "Column headers don't have unique names. Fix this error first before running other tests";
+	public static final String DROP_DOWN_ERROR = " does not match any value in the list of";
 	
 	public ErrorManager(BufferedWriter out, String sheetName, MediaType mediaType) {
 		this.out = out;
@@ -66,6 +67,9 @@ public class ErrorManager {
 		}
 		if (errorMessage.equals(UNIQUENESS_ERROR) || errorMessage.equals(MULTIPLE_HEADER_VALUES_ERROR)) {
 			return this.createDupFoundMessage(errorMessage, (LinkedHashMap<String, Object[]>) args[0], (String) args[1]);
+		}
+		if (errorMessage.equals(DROP_DOWN_ERROR)) {
+			return this.createDropDownMessage(errorMessage, (LinkedHashMap<String, Object[]>) args[0]);
 		}
 		else {
 			return this.createMessage(errorMessage, (Map<String, String>)args[0]);
@@ -163,6 +167,36 @@ public class ErrorManager {
 			messageBuffered.append(" is also in row(s) ");
 			messageBuffered.append(listOfDups);
 			messageBuffered.append("\n");
+		}
+		return messageBuffered;
+	}
+	
+	/**
+	 * Create an error message for values not matching 
+	 * a drop down list
+	 * @param message customized message
+	 * @param error <error cell coordinates, [sheet name of drop down, column id or drop down]>
+	 * @return the error message as a StringBuffer
+	 */
+	public StringBuffer createDropDownMessage(String message, LinkedHashMap<String, Object[]> error) {
+		StringBuffer messageBuffered = new StringBuffer();
+		Collection<String> keys = error.keySet();
+		Iterator<String> it = keys.iterator();
+		while(it.hasNext()) {
+			String next = it.next();
+			String[] sheetNameColumn = (String[]) error.get(next);
+			String sheetName = sheetNameColumn[0];
+			String column = sheetNameColumn[1];
+			messageBuffered.append("In sheet ");
+			messageBuffered.append(this.sheetName);
+			messageBuffered.append(",cell ");
+			messageBuffered.append(next);
+			messageBuffered.append(message);
+			messageBuffered.append(" sheet ");
+			messageBuffered.append(sheetName);
+			messageBuffered.append(",column ");
+			messageBuffered.append(column);
+			messageBuffered.append(".\n");
 		}
 		return messageBuffered;
 	}
